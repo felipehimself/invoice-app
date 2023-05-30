@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using InvoiceApp.Data;
+﻿using InvoiceApp.DTOs;
+using InvoiceApp.Helpers;
+using InvoiceApp.Interfaces;
 using InvoiceApp.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceApp.Controllers
 {
@@ -14,112 +10,93 @@ namespace InvoiceApp.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private readonly AppDbContext _context;
 
-        public ClientsController(AppDbContext context)
+        private readonly IClientRepository _clientRepository;
+
+        public ClientsController(IClientRepository clientRepository)
         {
-            _context = context;
-
+            _clientRepository = clientRepository;
         }
 
         // GET: api/Clients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Client>>> GetClients()
+        public async Task<ActionResult<IEnumerable<ClientResponseDTO>>> GetClients()
         {
-          if (_context.Clients == null)
-          {
-              return NotFound();
-          }
-            return await _context.Clients.ToListAsync();
+            var clientes = await _clientRepository.GetClients();
+
+            return clientes.Select(c => ClientMapper.MapClientResponse(c)).ToList();
+
         }
 
         // GET: api/Clients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Client>> GetClient(int id)
+        public async Task<ActionResult<ClientResponseDTO>> GetClient(int id)
         {
-          if (_context.Clients == null)
-          {
-              return NotFound();
-          }
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _clientRepository.GetClient(id);
 
-            if (client == null)
-            {
-                return NotFound();
-            }
+            if (client == null) return NotFound();
 
-            return client;
+            var response = ClientMapper.MapClientResponse(client);
+
+            return response;
         }
 
         // PUT: api/Clients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(int id, Client client)
+        public async Task<IActionResult> PutClient(int id, ClientRequestDTO clientDto)
         {
-            if (id != client.ClientId)
-            {
-                return BadRequest();
-            }
+            var client = await _clientRepository.GetClient(id);
 
-            _context.Entry(client).State = EntityState.Modified;
+            if (client == null) return BadRequest();
 
-            try
+            var clientToSave = new Client
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                ClientId = client.ClientId,
+                City = clientDto.City,
+                Country = clientDto.Country,
+                Email = clientDto.Email,
+                Name = clientDto.Name,
+                PostalCode = clientDto.PostalCode,
+                Street = clientDto.Street,
+            };
+
+            await _clientRepository.PutClient(clientToSave);
 
             return NoContent();
         }
 
         // POST: api/Clients
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(Client client)
+        public async Task<ActionResult<ClientResponseDTO>> PostClient(ClientRequestDTO clientDto)
         {
-          if (_context.Clients == null)
-          {
-              return Problem("Entity set 'AppDbContext.Clients'  is null.");
-          }
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
+            var client = new Client
+            {
+                City = clientDto.City,
+                Country = clientDto.Country,
+                Email = clientDto.Email,
+                Name = clientDto.Name,
+                PostalCode = clientDto.PostalCode,
+                Street = clientDto.Street,
+            };
 
-            return CreatedAtAction("GetClient", new { id = client.ClientId }, client);
+            await _clientRepository.PostClient(client);
+
+            var res = ClientMapper.MapClientResponse(client);
+
+            return CreatedAtAction("GetClient", new { id = client.ClientId }, res);
         }
 
         // DELETE: api/Clients/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
-            if (_context.Clients == null)
-            {
-                return NotFound();
-            }
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
+            var client = await _clientRepository.GetClient(id);
 
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
+            if (client == null) return NotFound();
+
+            await _clientRepository.DeleteClient(client);
 
             return NoContent();
-        }
-
-        private bool ClientExists(int id)
-        {
-            return (_context.Clients?.Any(e => e.ClientId == id)).GetValueOrDefault();
         }
     }
 }
