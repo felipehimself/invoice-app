@@ -1,16 +1,23 @@
-﻿namespace InvoiceApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace InvoiceApp.Models
 {
     public class Invoice
     {
+        [Key]
         public int InvoiceId { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
         public bool Paid { get; set; }
 
+        [Required]
         public DateTime IssueDate { get; set; }
         public int DueInDays { get; set; }
 
+        [NotMapped]
         public DateTime DueDate
         {
             get
@@ -20,6 +27,7 @@
             set { }
         }
 
+        [NotMapped]
         public double Total
         {
             get
@@ -29,6 +37,7 @@
             set { }
         }
 
+        [NotMapped]
         public DateTime CreatedAt
         {
             get
@@ -38,10 +47,10 @@
             set { }
         }
 
-        public int ClientId { get; set; }
-        public Client Client { get; set; }
+        public virtual int ClientId { get; set; }
+        public virtual Client Client { get; set; }
 
-        public ICollection<InvoiceItem> InvoiceItems { get; set; }
+        public virtual ICollection<InvoiceItem> InvoiceItems { get; set; }
 
 
     }
