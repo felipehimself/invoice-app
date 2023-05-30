@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connecti
 
 // scopes
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 var app = builder.Build();
 
