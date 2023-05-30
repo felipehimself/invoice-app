@@ -1,4 +1,6 @@
 using InvoiceApp.Data;
+using InvoiceApp.Interfaces;
+using InvoiceApp.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,9 @@ builder.Services.AddSwaggerGen();
 // mysql connection
 string connectionString = builder.Configuration.GetConnectionString("MySqlConnection")!;
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.33")));
+
+// scopes
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 var app = builder.Build();
 
