@@ -20,7 +20,7 @@ namespace InvoiceApp.Repositories
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<Client?>? GetClient(int id)
+        public async Task<Client> GetClient(int id)
         {
             return await _appDbContext.Clients.AsNoTracking().SingleOrDefaultAsync(client => client.ClientId == id);
 
