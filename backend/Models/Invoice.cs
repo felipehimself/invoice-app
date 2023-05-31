@@ -11,7 +11,8 @@ namespace InvoiceApp.Models
         [Required]
         public string Description { get; set; }
 
-        public bool Paid { get; set; }
+        [Required]
+        public string Status { get; set; }
 
         [Required]
         public DateTime IssueDate { get; set; }
