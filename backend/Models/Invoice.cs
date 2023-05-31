@@ -16,6 +16,8 @@ namespace InvoiceApp.Models
 
         [Required]
         public DateTime IssueDate { get; set; }
+
+        [Required]
         public int DueInDays { get; set; }
 
         [NotMapped]
