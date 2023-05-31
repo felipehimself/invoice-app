@@ -30,7 +30,7 @@ namespace InvoiceApp.Controllers
             new GetInvoicesDTO
             {
                 ClientName = invoice.Client.Name,
-                DueDate = invoice.DueDate,
+                DueDate = invoice.DueDate.ToString("yyyy-MM-dd"),
                 InvoiceId = invoice.InvoiceId,
                 Status = invoice.Status,
                 Total = invoice.Total
