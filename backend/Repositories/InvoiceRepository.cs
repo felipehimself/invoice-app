@@ -28,7 +28,7 @@ namespace InvoiceApp.Repositories
 
         public async Task<IEnumerable<Invoice>> GetInvoices()
         {
-            return await _appDbContext.Invoices.AsNoTracking().ToListAsync();
+            return await _appDbContext.Invoices.Include(inv => inv.Client).AsNoTracking().ToListAsync();
         }
 
         public async Task<Invoice> PostInvoice(Invoice invoice)
