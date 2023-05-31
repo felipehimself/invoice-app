@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using InvoiceApp.Data;
+using InvoiceApp.DTOs.Invoice;
+using InvoiceApp.Interfaces;
+using InvoiceApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InvoiceApp.Data;
-using InvoiceApp.Models;
 
 namespace InvoiceApp.Controllers
 {
@@ -15,31 +12,43 @@ namespace InvoiceApp.Controllers
     public class InvoicesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IInvoiceRepository _invoiceRepository;
 
-        public InvoicesController(AppDbContext context)
+        public InvoicesController(AppDbContext context, IInvoiceRepository invoiceRepository)
         {
             _context = context;
+            _invoiceRepository = invoiceRepository;
         }
 
         // GET: api/Invoices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Invoice>>> GetInvoices()
+        public async Task<ActionResult<IEnumerable<GetInvoicesDTO>>> GetInvoices()
         {
-          if (_context.Invoices == null)
-          {
-              return NotFound();
-          }
-            return await _context.Invoices.ToListAsync();
+            var invoices = await _invoiceRepository.GetInvoices();
+
+            var mappedInvoices = invoices.Select(invoice =>
+            new GetInvoicesDTO
+            {
+                ClientName = invoice.Client.Name,
+                DueDate = invoice.DueDate,
+                InvoiceId = invoice.InvoiceId,
+                Status = invoice.Status,
+                Total = invoice.Total
+            }
+            ).ToList();
+
+            return mappedInvoices;
+
         }
 
         // GET: api/Invoices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Invoice>> GetInvoice(int id)
         {
-          if (_context.Invoices == null)
-          {
-              return NotFound();
-          }
+            if (_context.Invoices == null)
+            {
+                return NotFound();
+            }
             var invoice = await _context.Invoices.FindAsync(id);
 
             if (invoice == null)
@@ -86,10 +95,10 @@ namespace InvoiceApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Invoice>> PostInvoice(Invoice invoice)
         {
-          if (_context.Invoices == null)
-          {
-              return Problem("Entity set 'AppDbContext.Invoices'  is null.");
-          }
+            if (_context.Invoices == null)
+            {
+                return Problem("Entity set 'AppDbContext.Invoices'  is null.");
+            }
             _context.Invoices.Add(invoice);
             await _context.SaveChangesAsync();
 
