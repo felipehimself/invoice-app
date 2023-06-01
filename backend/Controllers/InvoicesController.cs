@@ -1,5 +1,7 @@
 ﻿using InvoiceApp.Data;
+using InvoiceApp.DTOs.Client;
 using InvoiceApp.DTOs.Invoice;
+using InvoiceApp.Helpers;
 using InvoiceApp.Interfaces;
 using InvoiceApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -43,20 +45,17 @@ namespace InvoiceApp.Controllers
 
         // GET: api/Invoices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Invoice>> GetInvoice(int id)
+        public async Task<ActionResult<GetInvoiceDTO>> GetInvoice(int id)
         {
-            if (_context.Invoices == null)
-            {
-                return NotFound();
-            }
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoiceRepository.GetInvoice(id);
 
             if (invoice == null)
             {
                 return NotFound();
             }
+            var mappedInvoice = GetInvoiceMapper.MapInvoiceResponse(invoice);
 
-            return invoice;
+            return mappedInvoice;
         }
 
         // PUT: api/Invoices/5
