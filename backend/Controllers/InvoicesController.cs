@@ -1,5 +1,4 @@
 ﻿using InvoiceApp.Data;
-using InvoiceApp.DTOs.Client;
 using InvoiceApp.DTOs.Invoice;
 using InvoiceApp.Helpers;
 using InvoiceApp.Interfaces;
@@ -22,7 +21,7 @@ namespace InvoiceApp.Controllers
             _invoiceRepository = invoiceRepository;
         }
 
-        // GET: api/Invoices
+        // GET: api/invoices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetInvoicesDTO>>> GetInvoices()
         {
@@ -43,7 +42,7 @@ namespace InvoiceApp.Controllers
 
         }
 
-        // GET: api/Invoices/5
+        // GET: api/invoices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GetInvoiceDTO>> GetInvoice(int id)
         {
@@ -58,7 +57,7 @@ namespace InvoiceApp.Controllers
             return mappedInvoice;
         }
 
-        // PUT: api/Invoices/5
+        // PUT: api/invoices/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoice(int id, Invoice invoice)
@@ -89,22 +88,35 @@ namespace InvoiceApp.Controllers
             return NoContent();
         }
 
-        // POST: api/Invoices
+        // POST: api/invoices
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Invoice>> PostInvoice(Invoice invoice)
+        public async Task<ActionResult<GetInvoiceDTO>> PostInvoice(PostInvoiceDTO invoiceDTO)
         {
-            if (_context.Invoices == null)
+            var invoice = new Invoice
             {
-                return Problem("Entity set 'AppDbContext.Invoices'  is null.");
-            }
-            _context.Invoices.Add(invoice);
-            await _context.SaveChangesAsync();
+                ClientId = invoiceDTO.ClientId,
+                IssueDate = DateTime.Now,
+                Description = invoiceDTO.Description,
+                DueInDays = invoiceDTO.DueInDays,
+                Status = invoiceDTO.Status,
+                InvoiceItems = invoiceDTO.Items.Select(item => new InvoiceItem
+                {
+                    Name = item.Name,
+                    Price = item.Price,
+                    Quantity = item.Quantity,
+                }).ToList(),
+            };
 
-            return CreatedAtAction("GetInvoice", new { id = invoice.InvoiceId }, invoice);
+            var invoiceSaved = await _invoiceRepository.PostInvoice(invoice);
+
+            var invoiceMapped = GetInvoiceMapper.MapInvoiceResponse(invoiceSaved);
+
+
+            return CreatedAtAction("GetInvoice", new { id = invoiceMapped.InvoiceId }, invoiceMapped);
         }
 
-        // DELETE: api/Invoices/5
+        // DELETE: api/invoices/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
