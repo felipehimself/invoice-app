@@ -20,22 +20,26 @@ namespace InvoiceApp.Repositories
             await _appDbContext.SaveChangesAsync();
 
         }
-
         public async Task<Invoice> GetInvoice(int id)
         {
-            return await _appDbContext.Invoices.AsNoTracking().SingleOrDefaultAsync(inv => inv.InvoiceId == id);
+            return await _appDbContext.Invoices
+                .Include(inv => inv.Client)
+                .Include(inv => inv.InvoiceItems)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(inv => inv.InvoiceId == id);
         }
 
         public async Task<IEnumerable<Invoice>> GetInvoices()
         {
-            return await _appDbContext.Invoices.Include(inv => inv.Client).AsNoTracking().ToListAsync();
+            return await _appDbContext.Invoices.Include(inv => inv.Client).Include(inv => inv.InvoiceItems).AsNoTracking().ToListAsync();
         }
 
         public async Task<Invoice> PostInvoice(Invoice invoice)
         {
             await _appDbContext.Invoices.AddAsync(invoice);
             await _appDbContext.SaveChangesAsync();
-            return invoice;
+            var invoiceResponse = await GetInvoice(invoice.InvoiceId);
+            return invoiceResponse;
 
         }
 
