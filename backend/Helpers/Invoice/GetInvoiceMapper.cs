@@ -14,7 +14,7 @@ namespace InvoiceApp.Helpers
                 City = invoice.Client.City,
                 Country = invoice.Client.Country,
                 Email = invoice.Client.Email,
-                Name = invoice.Client.Email,
+                Name = invoice.Client.Name,
                 PostalCode = invoice.Client.PostalCode,
                 Street = invoice.Client.Street,
             };
