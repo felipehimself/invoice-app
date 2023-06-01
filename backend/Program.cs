@@ -2,6 +2,7 @@ using InvoiceApp.Data;
 using InvoiceApp.Interfaces;
 using InvoiceApp.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,15 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connecti
 // scopes
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
+// ignore object cycle for post methods
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
+// lowercase urls
+builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
 
