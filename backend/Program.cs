@@ -1,5 +1,6 @@
 using InvoiceApp.Data;
 using InvoiceApp.Interfaces;
+using InvoiceApp.Models;
 using InvoiceApp.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -18,8 +19,8 @@ string connectionString = builder.Configuration.GetConnectionString("MySqlConnec
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.33")));
 
 // scopes
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IGenericRepository<Client>, ClientRepository>();
+builder.Services.AddScoped<IGenericRepository<Invoice>, InvoiceRepository>();
 
 // ignore object cycle for post methods
 builder.Services.AddControllers().AddJsonOptions(options =>
