@@ -11,9 +11,9 @@ namespace InvoiceApp.Controllers
     public class ClientsController : ControllerBase
     {
 
-        private readonly IClientRepository _clientRepository;
+        private readonly IGenericRepository<Client> _clientRepository;
 
-        public ClientsController(IClientRepository clientRepository)
+        public ClientsController(IGenericRepository<Client> clientRepository)
         {
             _clientRepository = clientRepository;
         }
@@ -22,7 +22,7 @@ namespace InvoiceApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClientResponseDTO>>> GetClients()
         {
-            var clientes = await _clientRepository.GetClients();
+            var clientes = await _clientRepository.FindAll();
 
             return clientes.Select(c => ClientMapper.MapClientResponse(c)).ToList();
 
@@ -32,7 +32,7 @@ namespace InvoiceApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ClientResponseDTO>> GetClient(int id)
         {
-            var client = await _clientRepository.GetClient(id);
+            var client = await _clientRepository.FindById(id);
 
             if (client == null) return NotFound();
 
@@ -45,7 +45,7 @@ namespace InvoiceApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClient(int id, ClientRequestDTO clientDto)
         {
-            var client = await _clientRepository.GetClient(id);
+            var client = await _clientRepository.FindById(id);
 
             if (client == null) return BadRequest();
 
@@ -60,7 +60,7 @@ namespace InvoiceApp.Controllers
                 Street = clientDto.Street,
             };
 
-            await _clientRepository.PutClient(clientToSave);
+            await _clientRepository.Update(clientToSave);
 
             return NoContent();
         }
@@ -79,7 +79,7 @@ namespace InvoiceApp.Controllers
                 Street = clientDto.Street,
             };
 
-            await _clientRepository.PostClient(client);
+            await _clientRepository.Add(client);
 
             var res = ClientMapper.MapClientResponse(client);
 
@@ -90,11 +90,11 @@ namespace InvoiceApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
-            var client = await _clientRepository.GetClient(id);
+            var client = await _clientRepository.FindById(id);
 
             if (client == null) return NotFound();
 
-            await _clientRepository.DeleteClient(client);
+            await _clientRepository.Remove(client);
 
             return NoContent();
         }

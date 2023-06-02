@@ -13,9 +13,9 @@ namespace InvoiceApp.Controllers
     public class InvoicesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IGenericRepository<Invoice> _invoiceRepository;
 
-        public InvoicesController(AppDbContext context, IInvoiceRepository invoiceRepository)
+        public InvoicesController(AppDbContext context, IGenericRepository<Invoice> invoiceRepository)
         {
             _context = context;
             _invoiceRepository = invoiceRepository;
@@ -25,7 +25,7 @@ namespace InvoiceApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetInvoicesDTO>>> GetInvoices()
         {
-            var invoices = await _invoiceRepository.GetInvoices();
+            var invoices = await _invoiceRepository.FindAll();
 
             var mappedInvoices = invoices.Select(invoice =>
             new GetInvoicesDTO
@@ -46,7 +46,7 @@ namespace InvoiceApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<GetInvoiceDTO>> GetInvoice(int id)
         {
-            var invoice = await _invoiceRepository.GetInvoice(id);
+            var invoice = await _invoiceRepository.FindById(id);
 
             if (invoice == null)
             {
@@ -108,7 +108,7 @@ namespace InvoiceApp.Controllers
                 }).ToList(),
             };
 
-            var invoiceSaved = await _invoiceRepository.PostInvoice(invoice);
+            var invoiceSaved = await _invoiceRepository.Add(invoice);
 
             var invoiceMapped = GetInvoiceMapper.MapInvoiceResponse(invoiceSaved);
 
