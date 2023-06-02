@@ -1,6 +1,6 @@
 ﻿namespace InvoiceApp.DTOs.Invoice
 {
-    public class GetInvoiceItemDTO
+    public class ResponseInvoiceItemDTO
     {
         public int InvoiceItemId { get; set; }
         public string Name { get; set; }

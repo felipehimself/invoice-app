@@ -2,7 +2,7 @@
 
 namespace InvoiceApp.DTOs.Invoice
 {
-    public class GetInvoiceDTO
+    public class ResponseInvoiceDTO
     {
         public int InvoiceId { get; set; }
 
@@ -18,6 +18,6 @@ namespace InvoiceApp.DTOs.Invoice
 
         public virtual ClientInvoiceDTO Client { get; set; }
 
-        public virtual ICollection<GetInvoiceItemDTO> InvoiceItems { get; set; }
+        public virtual ICollection<ResponseInvoiceItemDTO> InvoiceItems { get; set; }
     }
 }

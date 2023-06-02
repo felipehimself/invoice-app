@@ -2,7 +2,7 @@
 
 namespace InvoiceApp.DTOs.Invoice
 {
-    public class PostInvoiceItemDTO
+    public class RequestInvoiceItemDTO
     {
         [Required]
         public string Name { get; set; }

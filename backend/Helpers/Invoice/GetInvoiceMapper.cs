@@ -6,7 +6,7 @@ namespace InvoiceApp.Helpers
 {
     public class GetInvoiceMapper
     {
-        public static GetInvoiceDTO MapInvoiceResponse(Invoice invoice)
+        public static ResponseInvoiceDTO MapInvoiceResponse(Invoice invoice)
         {
             var client = new ClientInvoiceDTO
             {
@@ -19,7 +19,7 @@ namespace InvoiceApp.Helpers
                 Street = invoice.Client.Street,
             };
 
-            var invoiceItems = invoice.InvoiceItems.Select(item => new GetInvoiceItemDTO
+            var invoiceItems = invoice.InvoiceItems.Select(item => new ResponseInvoiceItemDTO
             {
                 InvoiceItemId = item.InvoiceItemId,
                 Name = item.Name,
@@ -28,7 +28,7 @@ namespace InvoiceApp.Helpers
                 Total = item.Total,
             }).ToList();
 
-            return new GetInvoiceDTO
+            return new ResponseInvoiceDTO
             {
 
                 Client = client,

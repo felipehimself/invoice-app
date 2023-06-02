@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InvoiceApp.DTOs.Invoice
 {
-    public class PostInvoiceDTO
+    public class RequestInvoiceDTO
     {
 
         [Required]
@@ -22,7 +22,7 @@ namespace InvoiceApp.DTOs.Invoice
 
         [Required]
         [MinLength(1, ErrorMessage = "At leat 1 item is required")]
-        public List<PostInvoiceItemDTO> Items { get; set; }
+        public List<RequestInvoiceItemDTO> Items { get; set; }
 
     }
 }

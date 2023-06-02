@@ -23,12 +23,12 @@ namespace InvoiceApp.Controllers
 
         // GET: api/invoices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetInvoicesDTO>>> GetInvoices()
+        public async Task<ActionResult<IEnumerable<ResponseInvoicesDTO>>> GetInvoices()
         {
             var invoices = await _invoiceRepository.FindAll();
 
             var mappedInvoices = invoices.Select(invoice =>
-            new GetInvoicesDTO
+            new ResponseInvoicesDTO
             {
                 ClientName = invoice.Client.Name,
                 DueDate = invoice.DueDate.ToString("yyyy-MM-dd"),
@@ -44,7 +44,7 @@ namespace InvoiceApp.Controllers
 
         // GET: api/invoices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInvoiceDTO>> GetInvoice(int id)
+        public async Task<ActionResult<ResponseInvoiceDTO>> GetInvoice(int id)
         {
             var invoice = await _invoiceRepository.FindById(id);
 
@@ -91,7 +91,7 @@ namespace InvoiceApp.Controllers
         // POST: api/invoices
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GetInvoiceDTO>> PostInvoice(PostInvoiceDTO invoiceDTO)
+        public async Task<ActionResult<ResponseInvoiceDTO>> PostInvoice(RequestInvoiceDTO invoiceDTO)
         {
             var invoice = new Invoice
             {
