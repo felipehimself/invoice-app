@@ -1,10 +1,8 @@
-﻿using InvoiceApp.Data;
-using InvoiceApp.DTOs.Invoice;
+﻿using InvoiceApp.DTOs.Invoice;
 using InvoiceApp.Helpers;
 using InvoiceApp.Interfaces;
 using InvoiceApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceApp.Controllers
 {
@@ -12,12 +10,12 @@ namespace InvoiceApp.Controllers
     [ApiController]
     public class InvoicesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+
         private readonly IGenericRepository<Invoice> _invoiceRepository;
 
-        public InvoicesController(AppDbContext context, IGenericRepository<Invoice> invoiceRepository)
+        public InvoicesController(IGenericRepository<Invoice> invoiceRepository)
         {
-            _context = context;
+
             _invoiceRepository = invoiceRepository;
         }
 
@@ -60,30 +58,30 @@ namespace InvoiceApp.Controllers
         // PUT: api/invoices/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInvoice(int id, Invoice invoice)
+        public async Task<IActionResult> PutInvoice(int id, RequestInvoiceDTO invoiceDTO)
         {
-            if (id != invoice.InvoiceId)
-            {
-                return BadRequest();
-            }
 
-            _context.Entry(invoice).State = EntityState.Modified;
+            var invoice = await _invoiceRepository.FindById(id);
 
-            try
+            if (invoice == null) return NotFound();
+
+            var invoiceToUpdate = new Invoice
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!InvoiceExists(id))
+                InvoiceId = id,
+                ClientId = invoiceDTO.ClientId,
+                IssueDate = invoice.IssueDate,
+                Description = invoiceDTO.Description,
+                DueInDays = invoiceDTO.DueInDays,
+                Status = invoiceDTO.Status,
+                InvoiceItems = invoiceDTO.Items.Select(item => new InvoiceItem
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                    Name = item.Name,
+                    Price = item.Price,
+                    Quantity = item.Quantity,
+                }).ToList(),
+            };
+
+            await _invoiceRepository.Update(invoiceToUpdate);
 
             return NoContent();
         }
@@ -120,25 +118,17 @@ namespace InvoiceApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
-            if (_context.Invoices == null)
-            {
-                return NotFound();
-            }
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice = await _invoiceRepository.FindById(id);
             if (invoice == null)
             {
                 return NotFound();
             }
 
-            _context.Invoices.Remove(invoice);
-            await _context.SaveChangesAsync();
+
+
+            await _invoiceRepository.Remove(invoice);
 
             return NoContent();
-        }
-
-        private bool InvoiceExists(int id)
-        {
-            return (_context.Invoices?.Any(e => e.InvoiceId == id)).GetValueOrDefault();
         }
     }
 }
