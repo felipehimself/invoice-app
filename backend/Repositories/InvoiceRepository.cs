@@ -38,15 +38,35 @@ namespace InvoiceApp.Repositories
         {
             await _appDbContext.Invoices.AddAsync(invoice);
             await _appDbContext.SaveChangesAsync();
-            var invoiceResponse = await FindById(invoice.InvoiceId);
-            return invoiceResponse!;
+            var invoiceAdded = await FindById(invoice.InvoiceId);
+            return invoiceAdded!;
 
         }
 
         public async Task Update(Invoice invoice)
         {
-            _appDbContext.Invoices.Update(invoice);
-            await _appDbContext.SaveChangesAsync();
+
+            using var transaction = _appDbContext.Database.BeginTransaction();
+
+            try
+            {
+                var items = await _appDbContext.InvoiceItems.Where(inv => inv.InvoiceId == invoice.InvoiceId).ToListAsync();
+
+                _appDbContext.InvoiceItems.RemoveRange(items);
+                await _appDbContext.SaveChangesAsync();
+
+                _appDbContext.Invoices.Update(invoice);
+                await _appDbContext.SaveChangesAsync();
+
+                transaction.Commit();
+
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }
