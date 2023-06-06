@@ -30,6 +30,7 @@ namespace InvoiceApp.Controllers
             {
                 ClientName = invoice.Client.Name,
                 DueDate = invoice.DueDate.ToString("yyyy-MM-dd"),
+                IssueDate = invoice.IssueDate.ToString("yyyy-MM-dd"),
                 InvoiceId = invoice.InvoiceId,
                 Status = invoice.Status,
                 Total = invoice.Total
@@ -60,6 +61,7 @@ namespace InvoiceApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoice(int id, RequestInvoiceDTO invoiceDTO)
         {
+            if (invoiceDTO.IssueDate > invoiceDTO.DueDate) return BadRequest("Issue date cannot be above due date");
 
             var invoice = await _invoiceRepository.FindById(id);
 
@@ -71,8 +73,9 @@ namespace InvoiceApp.Controllers
                 ClientId = invoiceDTO.ClientId,
                 IssueDate = invoice.IssueDate,
                 Description = invoiceDTO.Description,
-                DueInDays = invoiceDTO.DueInDays,
+                DueDate = invoiceDTO.DueDate,
                 Status = invoiceDTO.Status,
+                CreatedAt = invoice.CreatedAt,
                 InvoiceItems = invoiceDTO.Items.Select(item => new InvoiceItem
                 {
                     Name = item.Name,
@@ -91,13 +94,16 @@ namespace InvoiceApp.Controllers
         [HttpPost]
         public async Task<ActionResult<ResponseInvoiceDTO>> PostInvoice(RequestInvoiceDTO invoiceDTO)
         {
+            if(invoiceDTO.IssueDate > invoiceDTO.DueDate) return BadRequest("Issue date cannot be above due date");
+
             var invoice = new Invoice
             {
                 ClientId = invoiceDTO.ClientId,
                 IssueDate = invoiceDTO.IssueDate,
                 Description = invoiceDTO.Description,
-                DueInDays = invoiceDTO.DueInDays,
+                DueDate = invoiceDTO.DueDate,
                 Status = invoiceDTO.Status,
+                CreatedAt = DateTime.Now,
                 InvoiceItems = invoiceDTO.Items.Select(item => new InvoiceItem
                 {
                     Name = item.Name,
