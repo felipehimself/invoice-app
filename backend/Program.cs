@@ -1,5 +1,6 @@
 using InvoiceApp.Data;
 using InvoiceApp.Interfaces;
+using InvoiceApp.Middlewares;
 using InvoiceApp.Models;
 using InvoiceApp.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,9 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connecti
 // scopes
 builder.Services.AddScoped<IGenericRepository<Client>, ClientRepository>();
 builder.Services.AddScoped<IGenericRepository<Invoice>, InvoiceRepository>();
+
+// to handle middleware interface
+builder.Services.AddTransient<GlobalExeptionMiddleware>();
 
 // ignore object cycle for post methods
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -45,5 +49,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<GlobalExeptionMiddleware>();
 
 app.Run();
