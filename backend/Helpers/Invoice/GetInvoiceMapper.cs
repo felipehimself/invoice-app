@@ -8,7 +8,7 @@ namespace InvoiceApp.Helpers
     {
         public static ResponseInvoiceDTO MapInvoiceResponse(Invoice invoice)
         {
-            var client = new ClientInvoiceDTO
+            var client = new ResponseClientInvoiceDTO
             {
                 ClientId = invoice.Client.ClientId,
                 City = invoice.Client.City,

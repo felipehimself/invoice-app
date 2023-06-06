@@ -5,10 +5,10 @@ namespace InvoiceApp.Helpers
 {
     public class ClientMapper
     {
-        public static ClientResponseDTO MapClientResponse(Client client)
+        public static ResponseClientDTO MapClientResponse(Client client)
         {
 
-            return new ClientResponseDTO
+            return new ResponseClientDTO
             {
                 ClientId = client.ClientId,
                 City = client.City,
