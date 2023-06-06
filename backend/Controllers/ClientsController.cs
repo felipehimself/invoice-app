@@ -20,7 +20,7 @@ namespace InvoiceApp.Controllers
 
         // GET: api/Clients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientResponseDTO>>> GetClients()
+        public async Task<ActionResult<IEnumerable<ResponseClientDTO>>> GetClients()
         {
             var clientes = await _clientRepository.FindAll();
 
@@ -30,7 +30,7 @@ namespace InvoiceApp.Controllers
 
         // GET: api/Clients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClientResponseDTO>> GetClient(int id)
+        public async Task<ActionResult<ResponseClientDTO>> GetClient(int id)
         {
             var client = await _clientRepository.FindById(id);
 
@@ -43,7 +43,7 @@ namespace InvoiceApp.Controllers
 
         // PUT: api/Clients/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(int id, ClientRequestDTO clientDto)
+        public async Task<IActionResult> PutClient(int id, RequestClientDTO clientDto)
         {
             var client = await _clientRepository.FindById(id);
 
@@ -67,7 +67,7 @@ namespace InvoiceApp.Controllers
 
         // POST: api/Clients
         [HttpPost]
-        public async Task<ActionResult<ClientResponseDTO>> PostClient(ClientRequestDTO clientDto)
+        public async Task<ActionResult<ResponseClientDTO>> PostClient(RequestClientDTO clientDto)
         {
             var client = new Client
             {
