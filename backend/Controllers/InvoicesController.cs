@@ -94,7 +94,7 @@ namespace InvoiceApp.Controllers
             var invoice = new Invoice
             {
                 ClientId = invoiceDTO.ClientId,
-                IssueDate = DateTime.Now,
+                IssueDate = invoiceDTO.IssueDate,
                 Description = invoiceDTO.Description,
                 DueInDays = invoiceDTO.DueInDays,
                 Status = invoiceDTO.Status,
@@ -109,7 +109,6 @@ namespace InvoiceApp.Controllers
             var invoiceSaved = await _invoiceRepository.Add(invoice);
 
             var invoiceMapped = GetInvoiceMapper.MapInvoiceResponse(invoiceSaved);
-
 
             return CreatedAtAction("GetInvoice", new { id = invoiceMapped.InvoiceId }, invoiceMapped);
         }
