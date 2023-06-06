@@ -23,7 +23,7 @@ namespace InvoiceApp.DTOs.Invoice
         public DateTime IssueDate { get; set; }
 
         [Required]
-        public int DueInDays { get; set; }
+        public DateTime DueDate { get; set; }
 
         [Required]
         public int ClientId { get; set; }

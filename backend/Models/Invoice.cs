@@ -18,17 +18,7 @@ namespace InvoiceApp.Models
         public DateTime IssueDate { get; set; }
 
         [Required]
-        public int DueInDays { get; set; }
-
-        [NotMapped]
-        public DateTime DueDate
-        {
-            get
-            {
-                return IssueDate.AddDays(DueInDays);
-            }
-            set { }
-        }
+        public DateTime DueDate { get; set; }
 
         [NotMapped]
         public double Total
@@ -40,15 +30,8 @@ namespace InvoiceApp.Models
             set { }
         }
 
-        [NotMapped]
-        public DateTime CreatedAt
-        {
-            get
-            {
-                return IssueDate;
-            }
-            set { }
-        }
+        public DateTime CreatedAt { get; set; }
+        
 
         public virtual int ClientId { get; set; }
         public virtual Client Client { get; set; }
