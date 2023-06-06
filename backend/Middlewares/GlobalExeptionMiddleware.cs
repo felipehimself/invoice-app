@@ -7,10 +7,11 @@ namespace InvoiceApp.Middlewares
     public class GlobalExeptionMiddleware : IMiddleware
     {
 
+        private readonly ILogger<GlobalExeptionMiddleware> _logger;
 
-        public GlobalExeptionMiddleware()
+        public GlobalExeptionMiddleware(ILogger<GlobalExeptionMiddleware> logger)
         {
-
+            _logger = logger;
         }
 
 
@@ -21,9 +22,9 @@ namespace InvoiceApp.Middlewares
             {
                 await next(context);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                _logger.LogError(e, message: e.Message);
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/json";
                 
