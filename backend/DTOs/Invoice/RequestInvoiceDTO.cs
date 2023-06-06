@@ -1,4 +1,7 @@
 ﻿using InvoiceApp.Validation;
+using Microsoft.Data.SqlClient.Server;
+using Microsoft.VisualBasic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace InvoiceApp.DTOs.Invoice
@@ -13,6 +16,9 @@ namespace InvoiceApp.DTOs.Invoice
         [Required]
         [StatusValidation]
         public string Status { get; set; }
+
+        [Required]
+        public DateTime IssueDate { get; set; }
 
         [Required]
         public int DueInDays { get; set; }
