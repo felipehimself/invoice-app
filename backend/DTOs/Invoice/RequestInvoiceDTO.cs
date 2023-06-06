@@ -11,6 +11,8 @@ namespace InvoiceApp.DTOs.Invoice
 
         [Required]
         [StringLength(100, MinimumLength = 5, ErrorMessage ="Description must be at leat 5 characters long")]
+        [EmptyStringValidation]
+
         public string Description { get; set; }
 
         [Required]

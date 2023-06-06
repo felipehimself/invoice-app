@@ -1,6 +1,6 @@
 ﻿namespace InvoiceApp.DTOs
 {
-    public class ClientResponseDTO
+    public class ResponseClientDTO
     {
         public int ClientId { get; set; }
         public string Name { get; set; }

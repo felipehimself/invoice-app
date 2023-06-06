@@ -16,7 +16,7 @@ namespace InvoiceApp.DTOs.Invoice
 
         public double Total { get; set; }
 
-        public virtual ClientInvoiceDTO Client { get; set; }
+        public virtual ResponseClientInvoiceDTO Client { get; set; }
 
         public virtual ICollection<ResponseInvoiceItemDTO> InvoiceItems { get; set; }
     }
